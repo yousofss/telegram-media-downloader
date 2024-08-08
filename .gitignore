@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+venv/
+env/
+.env
+
+# Telegram session files
+*.session
+
+# Configuration file
+config.yaml
+
+# Downloaded media
+downloads/
+
+# Log files
+*.log
+
+# IDE specific files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+download_history.json

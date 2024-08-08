@@ -1,0 +1,13 @@
+# Telegram API credentials
+api_id: 'your_api_id_here'
+api_hash: 'your_api_hash_here'
+phone_number: 'your_phone_number_here'
+
+# Download settings
+max_concurrent_downloads: 3
+rate_limit:
+  max_rate: 2  # number of requests
+  time_period: 1  # in seconds
+
+# Default download directory
+default_download_dir: 'downloads'
