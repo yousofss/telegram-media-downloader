@@ -22,7 +22,7 @@ This Python script allows you to download media (videos, photos, and documents) 
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yousofs/telegram-media-downloader.git
+   git clone https://github.com/yousofss/telegram-media-downloader.git
    cd telegram-media-downloader
    ```
 
@@ -51,7 +51,7 @@ Follow the on-screen prompts to:
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome. Feel free to check the [issues page](https://github.com/yousofs/telegram-media-downloader/issues) if you want to contribute.
+Contributions, issues, and feature requests are welcome. Feel free to check the [issues page](https://github.com/yousofss/telegram-media-downloader/issues) if you want to contribute.
 
 ## License
 
