@@ -97,8 +97,26 @@ async def list_media(channel, limit=None):
     return media
 
 async def download_media(message, download_dir, semaphore, history):
-    media_type = 'photo' if isinstance(message.media, MessageMediaPhoto) else 'file'
-    filename = f"{message.id}.jpg" if media_type == 'photo' else message.file.name
+    if isinstance(message.media, MessageMediaPhoto):
+        media_type = 'photo'
+        filename = f"photo_{message.id}.jpg"
+    else:
+        media_type = 'file'
+        # Handle case where message.file.name might be None
+        if hasattr(message, 'file') and message.file.name:
+            filename = message.file.name
+        else:
+            # Generate a default filename based on message ID and media type
+            extension = '.bin'  # Default extension
+            if hasattr(message, 'file') and hasattr(message.file, 'mime_type'):
+                if 'video' in message.file.mime_type:
+                    extension = '.mp4'
+                elif 'image' in message.file.mime_type:
+                    extension = '.jpg'
+                elif 'audio' in message.file.mime_type:
+                    extension = '.mp3'
+            filename = f"{media_type}_{message.id}{extension}"
+
     path = os.path.join(download_dir, filename)
     temp_path = f"{path}.part"
     
@@ -112,7 +130,9 @@ async def download_media(message, download_dir, semaphore, history):
             if os.path.exists(temp_path):
                 downloaded_size = os.path.getsize(temp_path)
             
-            with tqdm(total=message.file.size, initial=downloaded_size, unit='B', unit_scale=True, desc=filename, ncols=100) as progress_bar:
+            total_size = message.file.size if hasattr(message, 'file') else 0
+            
+            with tqdm(total=total_size, initial=downloaded_size, unit='B', unit_scale=True, desc=filename, ncols=100) as progress_bar:
                 async def progress_callback(current, total):
                     progress_bar.update(current - progress_bar.n)
                 
@@ -122,9 +142,10 @@ async def download_media(message, download_dir, semaphore, history):
             os.rename(temp_path, path)
             logger.info(f"Downloaded: {filename}")
             
+            # Update history with file information
             history.setdefault(str(message.chat_id), {})[str(message.id)] = {
                 'filename': filename,
-                'size': message.file.size,
+                'size': total_size,
                 'timestamp': message.date.isoformat()
             }
             save_download_history(history)
@@ -135,6 +156,11 @@ async def download_media(message, download_dir, semaphore, history):
             return await download_media(message, download_dir, semaphore, history)
         except Exception as e:
             logger.error(f"Error downloading {filename}: {str(e)}")
+            if os.path.exists(temp_path):
+                try:
+                    os.remove(temp_path)
+                except:
+                    pass
             return 0
 
 async def download_media_list(channel, selected_media, download_dir='downloads'):
